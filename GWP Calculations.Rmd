@@ -1,0 +1,137 @@
+---
+title: "GWP Calculations"
+author: "Alia Al-Haj"
+output: html_document
+---
+
+Below is code going step by step through the Glbal Warming Potential Calculations in Al-Haj & Fulweiler, 2020. Please note that for GWP and SFGWP mean methane flux rate not the median. For more details about the equations, please refer to the supplementary material.
+
+Step 1: Download data from figshare: https://doi.org/10.6084/m9.figshare.9202097.v1
+```{r}
+require(tidyverse)
+require(phyloseq)
+dat <- read_csv(file = "https://ndownloader.figshare.com/files/19422035")
+```
+
+
+Step 2: We did not include the Yang et al., 2018 Zhangjiang River Estuary observation in our analysis. Remove this line of code.
+```{r}
+dat <- dat[-107,]
+```
+
+
+Step 3: Calculate the average and standard error of mean methane emissions for each vegetation type. As stated in the paper in the second paragraph of section 5 "Global Estimates", 
+
+"As mean flux was most often reported in the literature, we use the mean values of observed CH4 flux ranges, when available. If mean CH4 flux was not reported, we calculated mean CH4 flux based on the reported data. The mean of these data was multiplied by the most recent maximum and minimum estimated areal extent of the respective ecosystem type (Supporing Text 3 in Data S1; Duarte, 2017; Hamilton & Casey, 2016; Mcowen et al., 2017)."
+
+Units: umol CH4 m-2 d-1
+
+```{r}
+#Subset the data by vegetation type
+mangrove <- subset(dat, dat$`Veg Type` == 'Mangrove')
+salt_marsh <- subset(dat, dat$`Veg Type` == 'Saltmarsh')
+seagrass <- subset(dat, dat$`Veg Type` == 'Seagrass')
+
+#Take an average of mean fluxes for each vegetation type
+mean_mangrove <- mean(mangrove$Mean)
+mean_salt_marsh <- mean(salt_marsh$Mean)
+mean_seagrass <- mean(seagrass$Mean)
+
+#Calculate the standard error of the fluxes for each vegetation type
+se_mangrove <- (sd(mangrove$Mean))/(sqrt(nrow(mangrove)))
+se_salt_marsh <- (sd(salt_marsh$Mean))/(sqrt(nrow(salt_marsh)))
+se_seagrass <- (sd(seagrass$Mean))/(sqrt(nrow(seagrass)))
+```
+
+
+Step 4: Scale data up to yearly flux (Supporting Text 3)
+
+Units: Tmol CH4 yr-1 m-2
+```{r}
+#Mean
+global_mangrove <- ((mean_mangrove*365)/(1e18))
+global_salt_marsh <- ((mean_salt_marsh*365)/(1e18))
+global_seagrass <- ((mean_seagrass*365)/(1e18))
+
+#Standard error
+global_mangrove_se <- ((se_mangrove*365)/(1e18))
+global_salt_marsh_se <- ((se_salt_marsh*365)/(1e18))
+global_seagrass_se <- ((se_seagrass*365)/(1e18))
+```
+
+
+Step 5: Scale data up to global area (Supporting text 3)
+
+Units: Tmol CH4 yr-1
+
+Global area (km2):
+Mangrove: 137,760 - 152,361
+Salt marsh: 55,000
+Seagrass: 788,000 - 1,646,788
+```{r}
+#convert areas to m2 from km2
+min_area_mangrove <- 137760*(1e6)
+max_area_mangrove <- 152361*(1e6)
+area_saltmarsh <- 55000*(1e6)
+min_area_seagrass <- 788000*(1e6)
+max_area_seagrass <- 1646788*(1e6)
+
+#Mean
+global_mangrove_max <- global_mangrove* max_area_mangrove
+global_mangrove_min <- global_mangrove* min_area_mangrove
+global_salt_marsh_area <- global_salt_marsh* area_saltmarsh
+global_seagrass_max <- global_seagrass* max_area_seagrass
+global_seagrass_min <- global_seagrass* min_area_seagrass
+
+#Standard error
+global_mangrove_max_se <- global_mangrove_se* max_area_mangrove
+global_mangrove_min_se <- global_mangrove_se* min_area_mangrove
+global_salt_marsh_area_se <- global_salt_marsh_se* area_saltmarsh
+global_seagrass_max_se <- global_seagrass_se* max_area_seagrass
+global_seagrass_min_se <- global_seagrass_se* min_area_seagrass
+
+#make a table of the above data
+#GMFR = global CH4 flux rate (Tmol CH4-C year-1)
+GMFR_Mean <- c(global_mangrove_max, global_mangrove_min, global_salt_marsh_area, global_seagrass_max, global_seagrass_min)
+GMFR_SE <- c(global_mangrove_max_se, global_mangrove_min_se, global_salt_marsh_area_se, global_seagrass_max_se, global_seagrass_min_se)
+row_names <- c("mangrove max", "mangrove min", "salt marsh","seagrass max", "seagrass min")
+
+GMFR_df <- data.frame(row_names, GMFR_Mean, GMFR_SE)
+```
+
+
+Step 6: Global Warming potential (Supporting text 5)
+
+GWP = flux rate * (32 tmolCO2eq/1 Tmol CH4)
+
+```{r}
+Mangrove_GWP_max <- global_mangrove_max*32 
+Mangrove_GWP_min <- global_mangrove_min*32 
+Salt_marsh_GWP_max <- global_salt_marsh_area*32 
+Seagrass_GWP_max <- global_seagrass_max*32 
+Seagrass_GWP_min <- global_seagrass_min*32 
+
+GWP <- c(Mangrove_GWP_max, Mangrove_GWP_min, Salt_marsh_GWP_max, Seagrass_GWP_max, Seagrass_GWP_min)
+
+GMFR_df <- data.frame(GMFR_df, GWP)
+```
+
+
+Step 7: Sustained flux global warming potention (Supporting text 6)
+
+SFGWP = flux rate * (45 tmolCO2eq/1 Tmol CH4)
+
+```{r}
+Mangrove_SFGWP_max <- global_mangrove_max*45 
+Mangrove_SFGWP_min <- global_mangrove_min*45 
+Salt_marsh_SFGWP_max <- global_salt_marsh_area*45 
+Seagrass_SFGWP_max <- global_seagrass_max*45
+Seagrass_SFGWP_min <- global_seagrass_min*45 
+
+SFGWP <- c(Mangrove_SFGWP_max, Mangrove_SFGWP_min, Salt_marsh_SFGWP_max, Seagrass_SFGWP_max, Seagrass_SFGWP_min)
+
+GMFR_df <- data.frame(GMFR_df, SFGWP)
+GMFR_df
+```
+
+
