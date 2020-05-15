@@ -120,22 +120,21 @@ GMFR_df <- data.frame(row_names, GMFR_Mean, GMFR_SE, GMFR_Med)
 
 Step 6: Global Warming potential with Mean and median (UPDATED SUPPORTING TEXT 5 GCB CORRECTION)
 
-GWP = flux rate * (16.04 Tg Ch4/mol) * 32 * 12gC/44gCO2
+GWP (g CO2-eq)= flux rate * (16.04 Tg Ch4/mol) * 32
 
 ```{r}
 #Mean
-Mangrove_GWP_max <- global_mangrove_max*16.04*32*(12/44)
-Mangrove_GWP_min <- global_mangrove_min*16.04*32*(12/44)
-Salt_marsh_GWP_max <- global_salt_marsh_area*16.04*32*(12/44)
-Seagrass_GWP_max <- global_seagrass_max*16.04*32*(12/44)
-Seagrass_GWP_min <- global_seagrass_min*16.04*32*(12/44)
-
+Mangrove_GWP_max <- global_mangrove_max*16.04*32
+Mangrove_GWP_min <- global_mangrove_min*16.04*32
+Salt_marsh_GWP_max <- global_salt_marsh_area*16.04*32
+Seagrass_GWP_max <- global_seagrass_max*16.04*32
+Seagrass_GWP_min <- global_seagrass_min*16.04*32
 #Median
-Mangrove_GWP_max_med <- global_mangrove_max_med*16.04*32*(12/44)
-Mangrove_GWP_min_med <- global_mangrove_min_med*16.04*32*(12/44)
-Salt_marsh_GWP_max_med <- global_salt_marsh_area_med*16.04*32*(12/44)
-Seagrass_GWP_max_med <- global_seagrass_max_med*16.04*32*(12/44)
-Seagrass_GWP_min_med <- global_seagrass_min_med*16.04*32*(12/44)
+Mangrove_GWP_max_med <- global_mangrove_max_med*16.04*32
+Mangrove_GWP_min_med <- global_mangrove_min_med*16.04*32
+Salt_marsh_GWP_max_med <- global_salt_marsh_area_med*16.04*32
+Seagrass_GWP_max_med <- global_seagrass_max_med*16.04*32
+Seagrass_GWP_min_med <- global_seagrass_min_med*16.04*32
 
 GWP <- c(Mangrove_GWP_max, Mangrove_GWP_min, Salt_marsh_GWP_max, Seagrass_GWP_max, Seagrass_GWP_min)
 GWP_Med <- c(Mangrove_GWP_max_med, Mangrove_GWP_min_med, Salt_marsh_GWP_max_med, Seagrass_GWP_max_med, Seagrass_GWP_min_med)
@@ -146,22 +145,22 @@ GMFR_df <- data.frame(GMFR_df, GWP, GWP_Med)
 
 Step 7: Sustained flux global warming potential with mean and median (UPDATED Supporting text 6 GCB CORRECTION)
 
-SFGWP = flux rate * (16.04 Tg Ch4/mol) * 45 * 12gC/44gCO2
+SFGWP (g CO2-eq)= flux rate * (16.04 Tg Ch4/mol) * 45
 
 ```{r}
 #Mean
-Mangrove_SFGWP_max <- global_mangrove_max*16.04*45*(12/44)
-Mangrove_SFGWP_min <- global_mangrove_min*16.04*45*(12/44)
-Salt_marsh_SFGWP_max <- global_salt_marsh_area*16.04*45*(12/44)
-Seagrass_SFGWP_max <- global_seagrass_max*16.04*45*(12/44)
-Seagrass_SFGWP_min <- global_seagrass_min*16.04*45*(12/44)
+Mangrove_SFGWP_max <- global_mangrove_max*16.04*45
+Mangrove_SFGWP_min <- global_mangrove_min*16.04*45
+Salt_marsh_SFGWP_max <- global_salt_marsh_area*16.04*45
+Seagrass_SFGWP_max <- global_seagrass_max*16.04*45
+Seagrass_SFGWP_min <- global_seagrass_min*16.04*45
 
 #Median
-Mangrove_SFGWP_max_med <- global_mangrove_max_med*16.04*45*(12/44)
-Mangrove_SFGWP_min_med <- global_mangrove_min_med*16.04*45*(12/44)
-Salt_marsh_SFGWP_max_med <- global_salt_marsh_area_med*16.04*45*(12/44)
-Seagrass_SFGWP_max_med <- global_seagrass_max_med*16.04*45*(12/44)
-Seagrass_SFGWP_min_med <- global_seagrass_min_med*16.04*45*(12/44)
+Mangrove_SFGWP_max_med <- global_mangrove_max_med*16.04*45
+Mangrove_SFGWP_min_med <- global_mangrove_min_med*16.04*45
+Salt_marsh_SFGWP_max_med <- global_salt_marsh_area_med*16.04*45
+Seagrass_SFGWP_max_med <- global_seagrass_max_med*16.04*45
+Seagrass_SFGWP_min_med <- global_seagrass_min_med*16.04*45
 
 
 SFGWP <- c(Mangrove_SFGWP_max, Mangrove_SFGWP_min, Salt_marsh_SFGWP_max, Seagrass_SFGWP_max, Seagrass_SFGWP_min)
